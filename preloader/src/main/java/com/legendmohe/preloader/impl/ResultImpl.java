@@ -49,6 +49,18 @@ class ResultImpl<T> implements Preloader.Result<T> {
     }
 
     @Override
+    public synchronized void error(int code, Exception ex) {
+        if (code == 0) {
+            code = Preloader.ERROR_CODE_EXCEPTION;
+        }
+        setException(new PreloadException(
+                code,
+                "user set error code=" + code + " ex=" + ex,
+                ex
+        ));
+    }
+
+    @Override
     public T get(long timeout) throws PreloadException {
         try {
             // 因为timeout<=0时，await不会等待，所以这里重新赋值一下

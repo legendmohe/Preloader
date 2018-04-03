@@ -196,6 +196,11 @@ public class PreloaderImpl implements IPreloader {
                         }
 
                         @Override
+                        public void error(int code, Exception ex) {
+                            PreloadSession.this.result.error(code, ex);
+                        }
+
+                        @Override
                         public T get(long timeout) throws PreloadException {
                             throw new RuntimeException("get result in PreloadTask");
                         }

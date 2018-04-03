@@ -27,14 +27,14 @@ public class SubActivity extends AppCompatActivity {
             Preloader.Result<String> preloadResult = Preloader.getResult(preloadTaskId);
             if (preloadResult != null) {
                 // sync get
-                try {
-                    String content = preloadResult.get(10000);
-                    mTextView.setText(content);
-                    Log.d(TAG, "sync onResult() called with: content = [" + content + "]");
-                } catch (PreloadException e) {
-                    mTextView.setText("e=" + e.getMessage());
-                    Log.d(TAG, "sync onResult() called with: e = [" + e + "]");
-                }
+//                try {
+//                    String content = preloadResult.get(1000);
+//                    mTextView.setText(content);
+//                    Log.d(TAG, "sync onResult() called with: content = [" + content + "]");
+//                } catch (PreloadException e) {
+//                    mTextView.setText("e=" + e.getMessage());
+//                    Log.d(TAG, "sync onResult() called with: e = [" + e + "]");
+//                }
                 // async get
                 preloadResult.get(new Preloader.ResultListener<String>() {
                     @Override
@@ -49,7 +49,7 @@ public class SubActivity extends AppCompatActivity {
                 });
             }
             // cancel task
-//            Preloader.cancel(preloadTaskId);
+            Preloader.cancel(preloadTaskId);
 //            Preloader.cancelAll();
         }
     }

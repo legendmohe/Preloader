@@ -8,9 +8,9 @@ import com.legendmohe.preloader.impl.PreloaderImpl;
 public class Preloader {
 
     public static final int ERROR_CODE_USER_CANCEL = 0;
-    public static final int ERROR_CODE_TIMEOUT = 1;
-    public static final int ERROR_CODE_INTERRUPT = 2;
-    public static final int ERROR_CODE_EXCEPTION = 3;
+    public static final int ERROR_CODE_TIMEOUT     = -10000;
+    public static final int ERROR_CODE_INTERRUPT   = -20000;
+    public static final int ERROR_CODE_EXCEPTION   = -30000;
 
     public static final long GET_RESULT_LISTENER_TIMEOUT = 30*1000;
 
@@ -132,6 +132,14 @@ public class Preloader {
          * @param result
          */
         void set(T result);
+
+        /**
+         * 设置错误码或者异常
+         *
+         * @param code
+         * @param ex
+         */
+        void error(int code, Exception ex);
 
         /**
          * 同步获取结果
