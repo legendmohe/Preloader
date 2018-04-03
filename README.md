@@ -18,20 +18,24 @@ Preloader是一个用于异步加载数据的工具。它提供同步或者异�
         PreloadTask<String> task = new PreloadTask<String>() {
 
             @Override
-            public void run(Preloader.Result<String> result) throws Exception {
-                try {
-                    // 模拟5秒的同步请求
-                    Thread.sleep(5*1000);
-                    // 设置请求结果
-                    result.set("hello world");
-                } catch (InterruptedException e) {
-                    throw e;
-                }
+            public void run(final Preloader.Result<String> result) throws Exception {
+                FakeRestfulApi.request("hello world", new ResponseListener() {
+                    @Override
+                    public void onSuccess(String response) {
+                        result.set(response);
+                    }
+
+                    @Override
+                    public void onFail(int resCode) {
+                        result.error(resCode, null);
+                    }
+                });
             }
 
             @Override
             public void onCancel() {
                 Log.d(TAG, "onCancel() called");
+                FakeRestfulApi.cancel();
             }
         };
 
