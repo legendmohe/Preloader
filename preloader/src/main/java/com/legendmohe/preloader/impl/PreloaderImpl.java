@@ -39,7 +39,7 @@ public class PreloaderImpl implements IPreloader {
     /**
      * 维护start了的任务列表
      */
-    private List<TaskSession<?>> mTasks = new LinkedList<>();
+    private List<PreloadSession<?>> mTasks = new LinkedList<>();
 
     /**
      * 自增任务id
@@ -50,22 +50,22 @@ public class PreloaderImpl implements IPreloader {
 
     @Override
     public synchronized <T> int start(final PreloadTask<T> task) {
-        TaskSession<T> taskSession = new TaskSession<>(
+        PreloadSession<T> preloadSession = new PreloadSession<>(
                 task
         );
         // 先设置taskId
-        taskSession.taskId = createTaskId();
+        preloadSession.taskId = createTaskId();
         // 然后加到队列中
-        mTasks.add(taskSession);
+        mTasks.add(preloadSession);
         // 再submit
-        taskSession.future = mTaskExecutor.submit(taskSession);
+        preloadSession.future = mTaskExecutor.submit(preloadSession);
 
-        return taskSession.taskId;
+        return preloadSession.taskId;
     }
 
     @Override
     public synchronized <T> Preloader.Result<T> getResult(int preloadTaskId) {
-        for (TaskSession<?> task : mTasks) {
+        for (PreloadSession<?> task : mTasks) {
             if (task.taskId == preloadTaskId) {
                 return (Preloader.Result<T>) task.getResult();
             }
@@ -75,8 +75,8 @@ public class PreloaderImpl implements IPreloader {
 
     @Override
     public synchronized void cancel(int preloadTaskId) {
-        TaskSession<?> target = null;
-        for (TaskSession<?> task : mTasks) {
+        PreloadSession<?> target = null;
+        for (PreloadSession<?> task : mTasks) {
             if (task.taskId == preloadTaskId) {
                 target = task;
                 break;
@@ -97,7 +97,7 @@ public class PreloaderImpl implements IPreloader {
 
     @Override
     public synchronized void cancelAll() {
-        for (TaskSession<?> task : mTasks) {
+        for (PreloadSession<?> task : mTasks) {
             task.result.setException(
                     new PreloadException(
                             Preloader.ERROR_CODE_USER_CANCEL,
@@ -129,8 +129,8 @@ public class PreloaderImpl implements IPreloader {
     }
 
     private void removeInnerTask(int preloadTaskId) {
-        TaskSession<?> target = null;
-        for (TaskSession<?> task : mTasks) {
+        PreloadSession<?> target = null;
+        for (PreloadSession<?> task : mTasks) {
             if (task.taskId == preloadTaskId) {
                 target = task;
                 break;
@@ -148,7 +148,7 @@ public class PreloaderImpl implements IPreloader {
      *
      * @param <T>
      */
-    class TaskSession<T> implements Runnable {
+    class PreloadSession<T> implements Runnable {
 
         private ResultImpl<T> result;
 
@@ -161,7 +161,7 @@ public class PreloaderImpl implements IPreloader {
 
         private int taskId;
 
-        TaskSession(PreloadTask<T> task) {
+        PreloadSession(PreloadTask<T> task) {
             this.task = task;
 
             if (this.task.getResultListenerHandler() == null) {
@@ -192,27 +192,27 @@ public class PreloaderImpl implements IPreloader {
                     task.run(new Preloader.Result<T>() {
                         @Override
                         public void set(T result) {
-                            TaskSession.this.result.set(result);
+                            PreloadSession.this.result.set(result);
                         }
 
                         @Override
                         public T get(long timeout) throws PreloadException {
-                            throw new RuntimeException("don't get result in PreloadTask");
+                            throw new RuntimeException("get result in PreloadTask");
                         }
 
                         @Override
                         public void get(Preloader.ResultListener<T> resultListener) {
-                            throw new RuntimeException("don't get result in PreloadTask");
+                            throw new RuntimeException("get result in PreloadTask");
                         }
 
                         @Override
                         public boolean hasSet() {
-                            return TaskSession.this.result.hasSet();
+                            return PreloadSession.this.result.hasSet();
                         }
                     });
                 } catch (Exception ex) {
                     result.setException(
-                            new PreloadException(Preloader.ERROR_CODE_EXCEPTION, "exception in task", ex)
+                            new PreloadException(Preloader.ERROR_CODE_EXCEPTION, "task thread throw exception = [" + ex.getMessage() + "]", ex)
                     );
                 }
             }

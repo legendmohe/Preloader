@@ -73,12 +73,7 @@ class ResultImpl<T> implements Preloader.Result<T> {
             }
         }
         if (mException != null) {
-            PreloadException preloadException = new PreloadException(
-                    Preloader.ERROR_CODE_EXCEPTION,
-                    "task thread exit with exception",
-                    mException
-            );
-            throw preloadException;
+            throw mException;
         }
         if (mResultHasSet) {
             notifyGetInvokeWithResult();

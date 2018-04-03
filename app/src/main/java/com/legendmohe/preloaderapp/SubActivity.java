@@ -28,7 +28,7 @@ public class SubActivity extends AppCompatActivity {
             if (preloadResult != null) {
                 // sync get
                 try {
-                    String content = preloadResult.get(1000);
+                    String content = preloadResult.get(10000);
                     mTextView.setText(content);
                     Log.d(TAG, "sync onResult() called with: content = [" + content + "]");
                 } catch (PreloadException e) {

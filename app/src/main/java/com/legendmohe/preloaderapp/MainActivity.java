@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "run: start");
                 try {
                     Thread.sleep(5*1000);
+                    result.get(1000);
                     result.set("hello world");
                 } catch (InterruptedException e) {
                     Log.d(TAG, "run: e=" + e);
