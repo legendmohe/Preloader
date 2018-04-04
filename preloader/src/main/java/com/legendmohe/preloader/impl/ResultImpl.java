@@ -62,12 +62,13 @@ class ResultImpl<T> implements Preloader.Result<T> {
     }
 
     @Override
+    public T get() throws PreloadException {
+        return get(Long.MAX_VALUE);
+    }
+
+    @Override
     public T get(long timeout) throws PreloadException {
         try {
-            // 因为timeout<=0时，await不会等待，所以这里重新赋值一下
-            if (timeout <= 0) {
-                timeout = Long.MAX_VALUE;
-            }
             if (!mLatch.await(timeout, TimeUnit.MILLISECONDS)) {
                 PreloadException preloadException = new PreloadException(
                         Preloader.ERROR_CODE_TIMEOUT,

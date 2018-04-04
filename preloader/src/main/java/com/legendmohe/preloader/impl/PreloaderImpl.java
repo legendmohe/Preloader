@@ -201,6 +201,11 @@ public class PreloaderImpl implements IPreloader {
                         }
 
                         @Override
+                        public T get() throws PreloadException {
+                            throw new RuntimeException("get result in PreloadTask");
+                        }
+
+                        @Override
                         public T get(long timeout) throws PreloadException {
                             throw new RuntimeException("get result in PreloadTask");
                         }

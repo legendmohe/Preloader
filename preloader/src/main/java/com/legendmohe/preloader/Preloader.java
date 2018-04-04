@@ -144,7 +144,15 @@ public class Preloader {
         /**
          * 同步获取结果
          *
-         * @param timeout 超时时间，单位毫秒。当timeout <= 0时，表示一直等待
+         * @return
+         * @throws PreloadException
+         */
+        T get() throws PreloadException;
+
+        /**
+         * 同步获取结果
+         *
+         * @param timeout 超时时间，单位毫秒。
          * @return
          * @throws PreloadException
          */
