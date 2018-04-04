@@ -39,8 +39,9 @@ class ResultImpl<T> implements Preloader.Result<T> {
     public synchronized void set(T result) {
         // 可能已经设置了exception或者result
         if (!mResultHasSet && mException == null) {
-            mResultHasSet = true;
             mResult = result;
+            // 这句放在mResult赋值语句下面
+            mResultHasSet = true;
             mResultListener.onSetResult(result);
             mLatch.countDown();
 
