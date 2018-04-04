@@ -63,7 +63,8 @@ class ResultImpl<T> implements Preloader.Result<T> {
 
     @Override
     public T get() throws PreloadException {
-        return get(Long.MAX_VALUE);
+        // 不要传Long.MAX_VALUE，否则可能会溢出
+        return get(Integer.MAX_VALUE);
     }
 
     @Override
